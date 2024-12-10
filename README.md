@@ -89,11 +89,7 @@ Below we are going to create the Handlebars object, set the partials loader, and
 <?php
 
 # With composer we can autoload the Handlebars package
-require_once ("./vendor/autoload.php");
-
-# If not using composer, you can still load it manually.
-# require 'src/Handlebars/Autoloader.php';
-# Handlebars\Autoloader::register();
+require_once ("vendor/autoload.php");
 
 use Handlebars\Handlebars;
 use Handlebars\Loader\FilesystemLoader;

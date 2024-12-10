@@ -17,6 +17,10 @@
         {
             "name": "Mardix",
             "homepage": "https://github.com/mardix"
+        },
+        {
+            "name": "Theodore Brown",
+            "email": "theodorejb@outlook.com"
         }
     ],
     "require": {
@@ -24,6 +28,12 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^9"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "phpunit"
     },
     "autoload": {
         "psr-0": {

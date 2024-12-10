@@ -1,23 +1,7 @@
 <?php
 
-/**
- * Class AutoloaderTest
- */
 class HandlebarsTest extends PHPUnit\Framework\TestCase
 {
-    /**
-     * Test handlebars autoloader
-     *
-     * @return void
-     */
-    public function testAutoLoad()
-    {
-        Handlebars\Autoloader::register(realpath(__DIR__ . '/../fixture/'));
-
-        $this->assertTrue(class_exists('Handlebars\\Test'));
-        $this->assertTrue(class_exists('Handlebars\\Example\\Test'));
-    }
-
     /**
      * Test basic tags
      *
