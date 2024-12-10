@@ -17,7 +17,6 @@
 namespace Handlebars;
 
 use Handlebars\Loader\StringLoader;
-use Handlebars\Cache\Dummy;
 use InvalidArgumentException;
 
 class Handlebars
@@ -51,8 +50,6 @@ class Handlebars
 
     private Loader $partialsLoader;
 
-    private Cache $cache;
-
     /**
      * @var callable escape function to use
      */
@@ -78,7 +75,6 @@ class Handlebars
      * escapeArgs     => array to pass as extra parameter to escape function
      * loader         => Loader object
      * partials_loader => Loader object
-     * cache          => Cache object
      * enableDataVariables => boolean. Enables @data variables (default: false)
      *
      * @param array $options array of options to set
@@ -97,10 +93,6 @@ class Handlebars
 
         if (isset($options['partials_loader'])) {
             $this->setPartialsLoader($options['partials_loader']);
-        }
-
-        if (isset($options['cache'])) {
-            $this->setCache($options['cache']);
         }
 
         if (isset($options['escape'])) {
@@ -244,25 +236,6 @@ class Handlebars
             $this->partialsLoader = new StringLoader();
         }
         return $this->partialsLoader;
-    }
-
-    /**
-     * Set cache for current engine
-     */
-    public function setCache(Cache $cache): void
-    {
-        $this->cache = $cache;
-    }
-
-    /**
-     * Get cache
-     */
-    public function getCache(): Cache
-    {
-        if (!isset($this->cache)) {
-            $this->cache = new Dummy();
-        }
-        return $this->cache;
     }
 
     /**
@@ -413,13 +386,7 @@ class Handlebars
      */
     private function tokenize(string $source): array
     {
-        $hash = md5(sprintf('version: %s, data : %s', self::VERSION, $source));
-        $tree = $this->getCache()->get($hash);
-        if ($tree === false) {
-            $tokens = $this->getTokenizer()->scan($source);
-            $tree = $this->getParser()->parse($tokens);
-            $this->getCache()->set($hash, $tree);
-        }
-        return $tree;
+        $tokens = $this->getTokenizer()->scan($source);
+        return $this->getParser()->parse($tokens);
     }
 }

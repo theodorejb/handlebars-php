@@ -383,33 +383,4 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
         });
         $this->assertEquals('Test helper is called', $engine->render('{{#test}}', []));
     }
-
-    private function delTree(string $dir): bool
-    {
-        $contents = scandir($dir);
-        if ($contents === false) {
-            return false;
-        }
-        $files = array_diff($contents, array('.', '..'));
-        foreach ($files as $file) {
-            (is_dir("$dir/$file")) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
-        }
-
-        return rmdir($dir);
-    }
-
-    /**
-     * It's not a good test :) but ok
-     */
-    public function testCacheSystem()
-    {
-        $path = sys_get_temp_dir() . '/__cache__handlebars';
-        @$this->delTree($path);
-
-        $dummy = new \Handlebars\Cache\Disk($path);
-        $engine = new \Handlebars\Handlebars(array('cache' => $dummy));
-        $this->assertEquals(0, count(glob($path . '/*')));
-        $engine->render('test', array());
-        $this->assertEquals(1, count(glob($path . '/*')));
-    }
 }
