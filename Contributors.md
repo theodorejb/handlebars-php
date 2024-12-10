@@ -1,1 +1,0 @@
-[Joey Rivera](https://github.com/joeyrivera)
