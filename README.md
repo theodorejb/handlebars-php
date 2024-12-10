@@ -14,7 +14,7 @@ Name: **handlebars-php**
 
 License: MIT
 
-Requirements: PHP >= 5.4
+Requirements: PHP >= 7.4
 
 ---
 
