@@ -5,15 +5,9 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
     /**
      * Test basic tags
      *
-     * @param string $src    handlebars source
-     * @param array  $data   data
-     * @param string $result expected data
-     *
      * @dataProvider simpleTagdataProvider
-     *
-     * @return void
      */
-    public function testBasicTags($src, $data, $result)
+    public function testBasicTags(string $src, array $data, string $result): void
     {
         $loader = new \Handlebars\Loader\StringLoader();
         $engine = new \Handlebars\Handlebars(array('loader' => $loader));
@@ -22,10 +16,8 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
 
     /**
      * Simple tag provider
-     *
-     * @return array
      */
-    public function simpleTagdataProvider()
+    public function simpleTagdataProvider(): array
     {
         return array(
             array(
@@ -50,15 +42,9 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
     /**
      * Test helpers (internal helpers)
      *
-     * @param string $src    handlebars source
-     * @param array  $data   data
-     * @param string $result expected data
-     *
      * @dataProvider internalHelpersdataProvider
-     *
-     * @return void
      */
-    public function testSimpleHelpers($src, $data, $result)
+    public function testSimpleHelpers(string $src, array $data, string $result): void
     {
         $loader = new \Handlebars\Loader\StringLoader();
         $helpers = new \Handlebars\Helpers();
@@ -69,10 +55,8 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
 
     /**
      * Simple helpers provider
-     *
-     * @return array
      */
-    public function internalHelpersdataProvider()
+    public function internalHelpersdataProvider(): array
     {
         return [
             [
@@ -199,13 +183,9 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $src
-     * @param array $data
-     * @param string $result
-     * @param bool $enableDataVariables
      * @dataProvider internalDataVariablesDataProvider
      */
-    public function testDataVariables($src, $data, $result, $enableDataVariables)
+    public function testDataVariables(string $src, array $data, string $result, bool $enableDataVariables): void
     {
         $loader = new \Handlebars\Loader\StringLoader();
         $helpers = new \Handlebars\Helpers();
@@ -238,9 +218,8 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
 
     /**
      * Data provider for data variables
-     * @return array
      */
-    public function internalDataVariablesDataProvider()
+    public function internalDataVariablesDataProvider(): array
     {
         // Build a standard set of objects to test against
         $keyPropertyName = '@key';
@@ -405,32 +384,26 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('Test helper is called', $engine->render('{{#test}}', []));
     }
 
-    /**
-     * @param $dir
-     *
-     * @return bool
-     */
-    private function delTree($dir)
+    private function delTree(string $dir): bool
     {
         $contents = scandir($dir);
         if ($contents === false) {
-            return;
+            return false;
         }
         $files = array_diff($contents, array('.', '..'));
         foreach ($files as $file) {
-            (is_dir("$dir/$file")) ? delTree("$dir/$file") : unlink("$dir/$file");
+            (is_dir("$dir/$file")) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
         }
 
         return rmdir($dir);
     }
 
     /**
-     * Its not a good test :) but ok
+     * It's not a good test :) but ok
      */
     public function testCacheSystem()
     {
         $path = sys_get_temp_dir() . '/__cache__handlebars';
-
         @$this->delTree($path);
 
         $dummy = new \Handlebars\Cache\Disk($path);

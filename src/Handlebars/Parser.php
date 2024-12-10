@@ -18,6 +18,7 @@
  */
 
 namespace Handlebars;
+
 use ArrayIterator;
 use LogicException;
 
@@ -25,12 +26,8 @@ class Parser
 {
     /**
      * Process array of tokens and convert them into parse tree
-     *
-     * @param array $tokens Set of
-     *
-     * @return array Token parse tree
      */
-    public function parse(Array $tokens = [])
+    public function parse(array $tokens = []): array
     {
         return $this->buildTree(new ArrayIterator($tokens));
     }
@@ -38,14 +35,9 @@ class Parser
     /**
      * Helper method for recursively building a parse tree.
      *
-     * @param \ArrayIterator $tokens Stream of tokens
-     *
-     * @throws \LogicException when nesting errors or mismatched section tags
-     * are encountered.
-     * @return array Token parse tree
-     *
+     * @throws \LogicException when nesting errors or mismatched section tags are encountered.
      */
-    private function buildTree(ArrayIterator $tokens)
+    private function buildTree(ArrayIterator $tokens): array
     {
         $stack = [];
 
@@ -55,8 +47,9 @@ class Parser
 
             if ($token === null) {
                 continue;
-            } else {
-                switch ($token[Tokenizer::TYPE]) {
+            }
+
+            switch ($token[Tokenizer::TYPE]) {
                 case Tokenizer::T_END_SECTION:
                     $newNodes = [];
                     do {
@@ -73,22 +66,17 @@ class Parser
                         ) {
                             $result[Tokenizer::NODES] = $newNodes;
                             $result[Tokenizer::END] = $token[Tokenizer::INDEX];
-                            array_push($stack, $result);
+                            $stack[] = $result;
                             break 2;
                         } else {
                             array_unshift($newNodes, $result);
                         }
                     } while (true);
-                    break;
                 default:
-                    array_push($stack, $token);
-                }
+                    $stack[] = $token;
             }
-
         } while ($tokens->valid());
 
         return $stack;
-
     }
-
 }

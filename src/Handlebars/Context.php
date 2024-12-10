@@ -30,38 +30,38 @@ class Context
     /**
      * @var array stack for context only top stack is available
      */
-    protected $stack = [];
+    protected array $stack = [];
 
     /**
      * @var array index stack for sections
      */
-    protected $index = [];
+    protected array $index = [];
 
     /**
      * @var array dataStack stack for data within sections
      */
-    protected $dataStack = [];
+    protected array $dataStack = [];
 
     /**
      * @var array key stack for objects
      */
-    protected $key = [];
+    protected array $key = [];
 
     /**
      * @var bool enableDataVariables true if @data variables should be used.
      */
-    protected $enableDataVariables = false;
+    protected bool $enableDataVariables = false;
 
     /**
      * Mustache rendering Context constructor.
      *
      * @param mixed $context Default rendering context (default: null)
      * @param array $options Options for the context. It may contain the following: (default: empty array)
-     *                       enableDataVariables => Boolean, Enables @data variables (default: false)
+     *                       enableDataVariables => bool, Enables @data variables (default: false)
      *
      * @throws InvalidArgumentException when calling this method when enableDataVariables is not a boolean.
      */
-    public function __construct($context = null, $options = [])
+    public function __construct($context = null, array $options = [])
     {
         if ($context !== null) {
             $this->stack = [$context];
@@ -81,24 +81,18 @@ class Context
      * Push a new Context frame onto the stack.
      *
      * @param mixed $value Object or array to use for context
-     *
-     * @return void
      */
-    public function push($value)
+    public function push($value): void
     {
-        array_push($this->stack, $value);
+        $this->stack[] = $value;
     }
 
     /**
      * Push an Index onto the index stack
-     *
-     * @param integer $index Index of the current section item.
-     *
-     * @return void
      */
-    public function pushIndex($index)
+    public function pushIndex(int $index): void
     {
-        array_push($this->index, $index);
+        $this->index[] = $index;
     }
 
     /**
@@ -106,24 +100,20 @@ class Context
      * @param array $data Associative array where key is the name of the @data variable and value is the value.
      * @throws LogicException when calling this method without having enableDataVariables.
      */
-    public function pushData($data)
+    public function pushData(array $data): void
     {
         if (!$this->enableDataVariables) {
             throw new LogicException('Data variables are not supported due to the enableDataVariables configuration. Remove the call to data variables or change the setting.');
         }
-        array_push($this->dataStack, $data);
+        $this->dataStack[] = $data;
     }
 
     /**
      * Push a Key onto the key stack
-     *
-     * @param string $key Key of the current object property.
-     *
-     * @return void
      */
-    public function pushKey($key)
+    public function pushKey(string $key): void
     {
-        array_push($this->key, $key);
+        $this->key[] = $key;
     }
 
     /**
@@ -138,21 +128,17 @@ class Context
 
     /**
      * Pop the last index from the stack.
-     *
-     * @return int Last index
      */
-    public function popIndex()
+    public function popIndex(): int
     {
         return array_pop($this->index);
     }
 
     /**
      * Pop the last section data from the stack.
-     *
-     * @return array Last data
      * @throws LogicException when calling this method without having enableDataVariables.
      */
-    public function popData()
+    public function popData(): array
     {
         if (!$this->enableDataVariables) {
             throw new LogicException('Data variables are not supported due to the enableDataVariables configuration. Remove the call to data variables or change the setting.');
@@ -162,10 +148,8 @@ class Context
 
     /**
      * Pop the last key from the stack.
-     *
-     * @return string Last key
      */
-    public function popKey()
+    public function popKey(): string
     {
         return array_pop($this->key);
     }
@@ -182,20 +166,16 @@ class Context
 
     /**
      * Get the index of current section item.
-     *
-     * @return mixed Last index
      */
-    public function lastIndex()
+    public function lastIndex(): int
     {
         return end($this->index);
     }
 
     /**
      * Get the key of current object property.
-     *
-     * @return mixed Last key
      */
-    public function lastKey()
+    public function lastKey(): string
     {
         return end($this->key);
     }
@@ -207,7 +187,7 @@ class Context
      *
      * @return mixed actual value
      */
-    public function with($variableName)
+    public function with(string $variableName)
     {
         $value = $this->get($variableName);
         $this->push($value);
@@ -216,17 +196,17 @@ class Context
     }
 
     /**
-     * Get a avariable from current context
+     * Get a variable from current context
      * Supported types :
      * variable , ../variable , variable.variable , .
      *
-     * @param string  $variableName variavle name to get from current context
+     * @param string  $variableName variable name to get from current context
      * @param boolean $strict       strict search? if not found then throw exception
      *
      * @throws InvalidArgumentException in strict mode and variable not found
      * @return mixed
      */
-    public function get($variableName, $strict = false)
+    public function get(string $variableName, bool $strict = false)
     {
         //Need to clean up
         $variableName = trim($variableName);
@@ -279,13 +259,10 @@ class Context
 
     /**
      * Given a data variable, retrieves the value associated.
-     *
-     * @param $variableName
-     * @param bool $strict
      * @return mixed
      * @throws LogicException when calling this method without having enableDataVariables.
      */
-    public function getDataVariable($variableName, $strict = false)
+    public function getDataVariable(string $variableName, bool $strict = false)
     {
         if (!$this->enableDataVariables) {
             throw new LogicException('Data variables are not supported due to the enableDataVariables configuration. Remove the call to data variables or change the setting.');
@@ -355,9 +332,9 @@ class Context
      * @param boolean $strict   strict search? if not found then throw exception
      *
      * @throws \InvalidArgumentException in strict mode and variable not found
-     * @return boolean true if exist
+     * @return mixed
      */
-    private function findVariableInContext($variable, $inside, $strict = false)
+    private function findVariableInContext($variable, string $inside, bool $strict = false)
     {
         $value = '';
         if (($inside !== '0' && empty($inside)) || ($inside == 'this')) {

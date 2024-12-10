@@ -19,7 +19,6 @@ namespace Handlebars;
 
 class Tokenizer
 {
-
     // Finite state machine states
     const IN_TEXT = 0;
     const IN_TAG_TYPE = 1;
@@ -40,7 +39,7 @@ class Tokenizer
     const T_TEXT = '_t';
 
     // Valid token types
-    private $tagTypes = [
+    private array $tagTypes = [
         self::T_SECTION => true,
         self::T_INVERTED => true,
         self::T_END_SECTION => true,
@@ -54,7 +53,7 @@ class Tokenizer
     ];
 
     // Interpolated tags
-    private $interpolatedTags = [
+    private array $interpolatedTags = [
         self::T_ESCAPED => true,
         self::T_UNESCAPED => true,
         self::T_UNESCAPED_2 => true,
@@ -72,34 +71,24 @@ class Tokenizer
     const VALUE = 'value';
     const ARGS = 'args';
 
-    protected $state;
-    protected $tagType;
-    protected $tag;
-    protected $buffer;
-    protected $tokens;
-    protected $seenTag;
-    protected $lineStart;
-    protected $otag;
-    protected $ctag;
+    protected int $state;
+    protected ?string $tagType;
+    protected string $buffer;
+    protected array $tokens;
+    protected int $seenTag;
+    protected int $lineStart;
+    protected string $otag;
+    protected string $ctag;
 
     /**
-     * Scan and tokenize template source.
-     *
-     * @param string $text       Mustache template source to tokenize
-     * @param string $delimiters Optional, pass opening and closing delimiters
-     *
-     * @return array Set of Mustache tokens
+     * Scan and tokenize Mustache template source.
      */
-    public function scan($text, $delimiters = null)
+    public function scan(string $text, ?string $delimiters = null): array
     {
-        if ($text instanceof HandlebarsString) {
-            $text = $text->getString();
-        }
-
         $this->reset();
 
         if ($delimiters !== null && $delimiters = trim($delimiters)) {
-            list($otag, $ctag) = explode(' ', $delimiters);
+            [$otag, $ctag] = explode(' ', $delimiters);
             $this->otag = $otag;
             $this->ctag = $ctag;
         }
@@ -223,17 +212,14 @@ class Tokenizer
 
     /**
      * Helper function to reset tokenizer internal state.
-     *
-     * @return void
      */
-    protected function reset()
+    protected function reset(): void
     {
         $this->state = self::IN_TEXT;
         $this->tagType = null;
-        $this->tag = null;
         $this->buffer = '';
         $this->tokens = [];
-        $this->seenTag = false;
+        $this->seenTag = 0;
         $this->lineStart = 0;
         $this->otag = '{{';
         $this->ctag = '}}';
@@ -241,12 +227,10 @@ class Tokenizer
 
     /**
      * Flush the current buffer to a token.
-     *
-     * @return void
      */
-    protected function flushBuffer()
+    protected function flushBuffer(): void
     {
-        if (!empty($this->buffer)) {
+        if ($this->buffer !== '') {
             $this->tokens[] = [
                 self::TYPE => self::T_TEXT,
                 self::VALUE => $this->buffer
@@ -257,10 +241,8 @@ class Tokenizer
 
     /**
      * Test whether the current line is entirely made up of whitespace.
-     *
-     * @return boolean True if the current line is all whitespace
      */
-    protected function lineIsWhitespace()
+    protected function lineIsWhitespace(): bool
     {
         $tokensCount = count($this->tokens);
         for ($j = $this->lineStart; $j < $tokensCount; $j++) {
@@ -281,12 +263,8 @@ class Tokenizer
 
     /**
      * Filter out whitespace-only lines and store indent levels for partials.
-     *
-     * @param bool $noNewLine Suppress the newline? (default: false)
-     *
-     * @return void
      */
-    protected function filterLine($noNewLine = false)
+    protected function filterLine(bool $noNewLine = false): void
     {
         $this->flushBuffer();
         if ($this->seenTag && $this->lineIsWhitespace()) {
@@ -307,25 +285,20 @@ class Tokenizer
             $this->tokens[] = [self::TYPE => self::T_TEXT, self::VALUE => "\n"];
         }
 
-        $this->seenTag = false;
+        $this->seenTag = 0;
         $this->lineStart = count($this->tokens);
     }
 
     /**
      * Change the current Mustache delimiters. Set new `otag` and `ctag` values.
-     *
-     * @param string $text  Mustache template source
-     * @param int    $index Current tokenizer index
-     *
-     * @return int New index value
      */
-    protected function changeDelimiters($text, $index)
+    protected function changeDelimiters(string $text, int $index): int
     {
         $startIndex = strpos($text, '=', $index) + 1;
         $close = '=' . $this->ctag;
         $closeIndex = strpos($text, $close, $index);
 
-        list($otag, $ctag) = explode(
+        [$otag, $ctag] = explode(
             ' ',
             trim(substr($text, $startIndex, $closeIndex - $startIndex))
         );
@@ -337,15 +310,8 @@ class Tokenizer
 
     /**
      * Test whether it's time to change tags.
-     *
-     * @param string $tag Current tag name
-     * @param string $text Mustache template source
-     * @param int $index Current tokenizer index
-     * @param int $tagLength Length of the opening/closing tag string
-     *
-     * @return boolean True if this is a closing section tag
      */
-    protected function tagChange($tag, $text, $index, $tagLength)
+    protected function tagChange(string $tag, string $text, int $index, int $tagLength): bool
     {
         return substr($text, $index, $tagLength) === $tag;
     }
