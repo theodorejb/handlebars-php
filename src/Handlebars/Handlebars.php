@@ -28,8 +28,6 @@ class Handlebars
 
     private Helpers $helpers;
 
-    private array $aliases = [];
-
     /**
      * @var bool Enable @data variables
      */
@@ -168,18 +166,6 @@ class Handlebars
     {
         $tree = $this->tokenize($source);
         return new Template($this, $tree, $source);
-    }
-
-    /**
-     * Load a partial by name with current partial loader
-     */
-    public function loadPartial(string $name): Template
-    {
-        if (isset($this->aliases[$name])) {
-            $name = $this->aliases[$name];
-        }
-        $tree = $this->tokenize($name);
-        return new Template($this, $tree, $name);
     }
 
     /**

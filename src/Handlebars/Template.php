@@ -267,7 +267,7 @@ class Template
      */
     private function partial(Context $context, array $current): string
     {
-        $partial = $this->handlebars->loadPartial($current[Tokenizer::NAME]);
+        $partial = $this->handlebars->loadTemplate($current[Tokenizer::NAME]);
 
         if ($current[Tokenizer::ARGS]) {
             $context = $context->get($current[Tokenizer::ARGS]);
