@@ -32,36 +32,30 @@ class Helpers
      */
     protected array $helpers = [];
     private array $tpl = [];
-    protected array $builtinHelpers = [
-        "if",
-        "each",
-        "with",
-        "unless",
-        "bindAttr",
-        "upper",                // Put all chars in uppercase
-        "lower",                // Put all chars in lowercase
-        "capitalize",           // Capitalize just the first word
-        "capitalize_words",     // Capitalize each words
-        "reverse",              // Reverse a string
-        "format_date",          // Format a date
-        "inflect",              // Inflect the wording based on count ie. 1 album, 10 albums
-        "default",              // If a variable is null, it will use the default instead
-        "truncate",             // Truncate section
-        "raw",                  // Return the source as is without converting
-        "repeat",               // Repeat a section
-        "define",               // Define a block to be used with "invoke"
-        "invoke",               // Invoke a block that was defined with "define"
-    ];
 
     /**
      * Create new helper container class
      */
     public function __construct(?array $helpers = null)
     {
-        foreach($this->builtinHelpers as $helper) {
-            $helperName = $this->underscoreToCamelCase($helper);
-            $this->add($helper, [$this, "helper{$helperName}"]);
-        }
+        $this->add('if', [$this, 'helperIf']);
+        $this->add('each', [$this, 'helperEach']);
+        $this->add('with', [$this, 'helperWith']);
+        $this->add('unless', [$this, 'helperUnless']);
+        $this->add('bindAttr', [$this, 'helperBindAttr']);
+        $this->add('upper', [$this, 'helperUpper']);
+        $this->add('lower', [$this, 'helperLower']);
+        $this->add('capitalize', [$this, 'helperCapitalize']);
+        $this->add('capitalize_words', [$this, 'helperCapitalizeWords']);
+        $this->add('reverse', [$this, 'helperReverse']);
+        $this->add('format_date', [$this, 'helperFormatDate']);
+        $this->add('inflect', [$this, 'helperInflect']);
+        $this->add('default', [$this, 'helperDefault']);
+        $this->add('truncate', [$this, 'helperTruncate']);
+        $this->add('raw', [$this, 'helperRaw']);
+        $this->add('repeat', [$this, 'helperRepeat']);
+        $this->add('define', [$this, 'helperDefine']);
+        $this->add('invoke', [$this, 'helperInvoke']);
 
         if ($helpers !== null) {
             foreach ($helpers as $name => $helper) {
@@ -133,24 +127,6 @@ class Helpers
             throw new InvalidArgumentException('Unknown helper: ' . $name);
         }
         unset($this->helpers[$name]);
-    }
-
-    /**
-     * Clear the helper collection.
-     *
-     * Removes all helpers from this collection.
-     */
-    public function clear(): void
-    {
-        $this->helpers = [];
-    }
-
-    /**
-     * Check whether the helper collection is empty.
-     */
-    public function isEmpty(): bool
-    {
-        return empty($this->helpers);
     }
 
     /**
@@ -352,7 +328,7 @@ class Helpers
     }
 
     /**
-     * To uppercase string
+     * Put all characters in uppercase
      *
      * {{#upper data}}
      */
@@ -362,7 +338,7 @@ class Helpers
     }
 
     /**
-     * To lowercase string
+     * Put all characters in lowercase
      *
      * {{#lower data}}
      */
@@ -372,7 +348,7 @@ class Helpers
     }
 
     /**
-     * to capitalize first letter
+     * Capitalize the first letter
      *
      * {{#capitalize}}
      */
@@ -382,7 +358,7 @@ class Helpers
     }
 
     /**
-     * To capitalize first letter in each word
+     * Capitalize the first letter in each word
      *
      * {{#capitalize_words data}}
      */
@@ -392,7 +368,7 @@ class Helpers
     }
 
     /**
-     * To reverse a string
+     * Reverse a string
      *
      * {{#reverse data}}
      */
@@ -427,6 +403,7 @@ class Helpers
     }
 
     /**
+     * Inflect the wording based on count (i.e. 1 album, 10 albums)
      * {{inflect count 'album' 'albums'}}
      * {{inflect count '%d album' '%d albums'}}
      */
@@ -442,7 +419,7 @@ class Helpers
     }
 
     /**
-      * Provide a default fallback
+      * If a variable is falsy, use the default instead.
       *
       * {{default title "No title available"}}
       */
@@ -456,7 +433,7 @@ class Helpers
     }
 
     /**
-      * Truncate a string to a length, and append and ellipsis if provided
+      * Truncate a string to a length, and append an ellipsis if provided
       * {{#truncate content 5 "..."}}
       */
     public function helperTruncate(Template $template, Context $context, string $args, string $source): string
@@ -496,7 +473,7 @@ class Helpers
     }
 
     /**
-     * Define a section to be used later by using 'invoke'
+     * Define a section to be used later with 'invoke'
      *
      * --> Define a section: hello
      * {{#define hello}}
@@ -533,14 +510,6 @@ class Helpers
             throw new LogicException("Can't INVOKE '{$args}'. '{$args}' was not DEFINE ");
         }
         return $this->tpl["DEFINE"][$args]->render($context);
-    }
-
-    /**
-     * Change underscore helper name to CamelCase
-     */
-    private function underscoreToCamelCase($string): string
-    {
-        return str_replace(' ', '', ucwords(str_replace('_', ' ', $string)));
     }
 
     /**
