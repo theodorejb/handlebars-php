@@ -37,7 +37,6 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
         );
     }
 
-
     /**
      * Test helpers (internal helpers)
      *
@@ -45,9 +44,7 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
      */
     public function testSimpleHelpers(string $src, array $data, string $result): void
     {
-        $helpers = new \Handlebars\Helpers();
-        $engine = new \Handlebars\Handlebars(array('helpers' => $helpers));
-
+        $engine = new \Handlebars\Handlebars();
         $this->assertEquals($result, $engine->render($src, $data));
     }
 
@@ -185,9 +182,7 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
      */
     public function testDataVariables(string $src, array $data, string $result, bool $enableDataVariables): void
     {
-        $helpers = new \Handlebars\Helpers();
         $engine = new \Handlebars\Handlebars(array(
-            'helpers' => $helpers,
             'enableDataVariables'=> $enableDataVariables,
         ));
 
@@ -203,7 +198,6 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
         $object->{'@unknown'} = 'zucchini';
         $data = ['data' => [$object]];
         $engine = new \Handlebars\Handlebars(array(
-            'helpers' => new \Handlebars\Helpers(),
             'enableDataVariables'=> false,
         ));
         $template = "{{#each data}}{{@first}}, {{@last}}, {{@index}}, {{@unknown}}{{/each}}";
