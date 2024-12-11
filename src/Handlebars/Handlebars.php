@@ -50,16 +50,6 @@ class Handlebars
 
     private Loader $partialsLoader;
 
-    /**
-     * @var callable escape function to use
-     */
-    private $escape = 'htmlspecialchars';
-
-    /**
-     * @var array parameters to pass to escape function
-     */
-    private array $escapeArgs = [ENT_COMPAT, 'UTF-8'];
-
     private array $aliases = [];
 
     /**
@@ -71,8 +61,6 @@ class Handlebars
      * Handlebars engine constructor
      * $options array can contain :
      * helpers        => Helpers object
-     * escape         => a callable function to escape values
-     * escapeArgs     => array to pass as extra parameter to escape function
      * loader         => Loader object
      * partials_loader => Loader object
      * enableDataVariables => boolean. Enables @data variables (default: false)
@@ -93,22 +81,6 @@ class Handlebars
 
         if (isset($options['partials_loader'])) {
             $this->setPartialsLoader($options['partials_loader']);
-        }
-
-        if (isset($options['escape'])) {
-            if (!is_callable($options['escape'])) {
-                throw new InvalidArgumentException(
-                    'Handlebars Constructor "escape" option must be callable'
-                );
-            }
-            $this->escape = $options['escape'];
-        }
-
-        if (isset($options['escapeArgs'])) {
-            if (!is_array($options['escapeArgs'])) {
-                $options['escapeArgs'] = array($options['escapeArgs']);
-            }
-            $this->escapeArgs = $options['escapeArgs'];
         }
 
         if (isset($options['partials_alias'])
@@ -236,46 +208,6 @@ class Handlebars
             $this->partialsLoader = new StringLoader();
         }
         return $this->partialsLoader;
-    }
-
-    /**
-     * Get current escape function
-     */
-    public function getEscape(): callable
-    {
-        return $this->escape;
-    }
-
-    /**
-     * Set current escape function
-     * @throws \InvalidArgumentException
-     */
-    public function setEscape(callable $escape): void
-    {
-        if (!is_callable($escape)) {
-            throw new InvalidArgumentException(
-                'Escape function must be a callable'
-            );
-        }
-        $this->escape = $escape;
-    }
-
-    /**
-     * Get current escape function
-     */
-    public function getEscapeArgs(): array
-    {
-        return $this->escapeArgs;
-    }
-
-    /**
-     * Set current escape function
-     *
-     * @param array $escapeArgs arguments to pass as extra arg to function
-     */
-    public function setEscapeArgs(array $escapeArgs): void
-    {
-        $this->escapeArgs = $escapeArgs;
     }
 
     /**
