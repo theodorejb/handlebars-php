@@ -1,64 +1,29 @@
-[![PHPUnit](https://github.com/salesforce/handlebars-php/actions/workflows/ci.yml/badge.svg)](https://github.com/salesforce/handlebars-php/actions/workflows/ci.yml)
-
----
-
 #handlebars-php
 
----
-
 #### A simple, logic-less, yet powerful templating engine for PHP
-
----
 
 Name: **handlebars-php**
 
 License: MIT
-
-Requirements: PHP >= 7.4
-
----
-
 
 ## About Handlebars
 
 Handlebars provides the power necessary to let you build semantic templates effectively with no frustration,
 that keep the view and the code separated like we all know they should be.
 
-
 Fork of: [Handlebars.php by XaminProject](https://github.com/mardix/Handlebars)
 
 Handlebars, is the PHP port of [Handlebars.js](http://handlebarsjs.com/)
 
----
-
 ## Install Handlebars
 
-
-You can just download Handlebars.php as is, or with Composer.
-
-To install with composer, add the following in the require key in your **composer.json** file
-
-`"salesforce/handlebars-php": "1.*"`
-
-composer.json
-
-```json
-{
-    "name": "myapp/name",
-    "description": "My awesome app name",
-    "require": {
-        "salesforce/handlebars-php": "1.*"
-    }
-}
 ```
-
------
+composer require salesforce/handlebars-php:"^3.0"
+```
 
 ## Getting Started
 
 At the minimum, we are required to have an array model and a template string. Alternatively we can have a file containing handlebars (or html, text, etc) expression.
-
-
 
 #### Template
 
@@ -79,39 +44,9 @@ The string above can be used as is in your PHP file, or be put in a file (ie: */
 
 #### PHP file
 
-Now the we've created our template file, in a php file (index.php) we'll create the data to passed to the model. The model is a key/value array.
+Now that we've created our template file, in a php file (index.php) we'll create the data to passed to the model. The model is a key/value array.
 
 Below we are going to create the Handlebars object, set the partials loader, and put some data in the model.
-
-**/index.php**
-
-```php
-<?php
-
-# With composer we can autoload the Handlebars package
-require_once ("vendor/autoload.php");
-
-use Handlebars\Handlebars;
-use Handlebars\Loader\FilesystemLoader;
-
-# Set the partials files
-$partialsDir = __DIR__."/templates";
-$partialsLoader = new FilesystemLoader($partialsDir,
-    [
-        "extension" => "html"
-    ]
-);
-
-# We'll use $handlebars throughout this the examples, assuming the will be all set this way
-$handlebars = new Handlebars([
-    "loader" => $partialsLoader,
-    "partials_loader" => $partialsLoader
-]);
-
-# Will render the model to the templates/main.tpl template
-$model = [...];
-echo $handlebars->render("main", $model);
-```
 
 #### Assign Data
 
@@ -740,7 +675,6 @@ $object->{'@unknown'} = 'zucchini';
 $data = ['objects' => [$object]];
 
 $engine = new \Handlebars\Handlebars(array(
-    'loader' => new \Handlebars\Loader\StringLoader(),
     'helpers' => new \Handlebars\Helpers(),
     'enableDataVariables'=> $enabled,
 ));

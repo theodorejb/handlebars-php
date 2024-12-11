@@ -9,8 +9,7 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
      */
     public function testBasicTags(string $src, array $data, string $result): void
     {
-        $loader = new \Handlebars\Loader\StringLoader();
-        $engine = new \Handlebars\Handlebars(array('loader' => $loader));
+        $engine = new \Handlebars\Handlebars();
         $this->assertEquals($result, $engine->render($src, $data));
     }
 
@@ -46,9 +45,8 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
      */
     public function testSimpleHelpers(string $src, array $data, string $result): void
     {
-        $loader = new \Handlebars\Loader\StringLoader();
         $helpers = new \Handlebars\Helpers();
-        $engine = new \Handlebars\Handlebars(array('loader' => $loader, 'helpers' => $helpers));
+        $engine = new \Handlebars\Handlebars(array('helpers' => $helpers));
 
         $this->assertEquals($result, $engine->render($src, $data));
     }
@@ -187,10 +185,8 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
      */
     public function testDataVariables(string $src, array $data, string $result, bool $enableDataVariables): void
     {
-        $loader = new \Handlebars\Loader\StringLoader();
         $helpers = new \Handlebars\Helpers();
         $engine = new \Handlebars\Handlebars(array(
-            'loader' => $loader,
             'helpers' => $helpers,
             'enableDataVariables'=> $enableDataVariables,
         ));
@@ -207,7 +203,6 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
         $object->{'@unknown'} = 'zucchini';
         $data = ['data' => [$object]];
         $engine = new \Handlebars\Handlebars(array(
-            'loader' => new \Handlebars\Loader\StringLoader(),
             'helpers' => new \Handlebars\Helpers(),
             'enableDataVariables'=> false,
         ));
@@ -376,8 +371,7 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
      */
     public function testCustomHelper()
     {
-        $loader = new \Handlebars\Loader\StringLoader();
-        $engine = new \Handlebars\Handlebars(array('loader' => $loader));
+        $engine = new \Handlebars\Handlebars();
         $engine->addHelper('test', function () {
             return 'Test helper is called';
         });

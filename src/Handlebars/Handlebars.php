@@ -16,39 +16,17 @@
 
 namespace Handlebars;
 
-use Handlebars\Loader\StringLoader;
 use InvalidArgumentException;
 
 class Handlebars
 {
-    private static $instance = null;
-    const VERSION = '2.2';
-
     const OPTION_ENABLE_DATA_VARIABLES = 'enableDataVariables';
-
-    /**
-     * factory method
-     *
-     * @param array $options see __construct's options parameter
-     */
-    public static function factory(array $options = []): Handlebars
-    {
-        if (! self::$instance) {
-            self::$instance = new self($options);
-        }
-
-        return self::$instance;
-    }
 
     private Tokenizer $tokenizer;
 
     private Parser $parser;
 
     private Helpers $helpers;
-
-    private Loader $loader;
-
-    private Loader $partialsLoader;
 
     private array $aliases = [];
 
@@ -61,32 +39,16 @@ class Handlebars
      * Handlebars engine constructor
      * $options array can contain :
      * helpers        => Helpers object
-     * loader         => Loader object
-     * partials_loader => Loader object
      * enableDataVariables => boolean. Enables @data variables (default: false)
      *
      * @param array $options array of options to set
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct(Array $options = [])
+    public function __construct(array $options = [])
     {
         if (isset($options['helpers'])) {
             $this->setHelpers($options['helpers']);
-        }
-
-        if (isset($options['loader'])) {
-            $this->setLoader($options['loader']);
-        }
-
-        if (isset($options['partials_loader'])) {
-            $this->setPartialsLoader($options['partials_loader']);
-        }
-
-        if (isset($options['partials_alias'])
-            && is_array($options['partials_alias'])
-        ) {
-            $this->aliases = $options['partials_alias'];
         }
 
         if (isset($options[self::OPTION_ENABLE_DATA_VARIABLES])) {
@@ -109,16 +71,6 @@ class Handlebars
     public function render(string $template, $data): string
     {
         return $this->loadTemplate($template)->render($data);
-    }
-    /**
-     * To invoke when this object is called as a function
-     *
-     * @param string $template template name
-     * @param mixed  $data     data to use as context
-     */
-    public function __invoke(string $template, $data): string
-    {
-        return $this->render($template, $data);
     }
 
     /**
@@ -173,52 +125,6 @@ class Handlebars
     }
 
     /**
-     * Set current loader
-     */
-    public function setLoader(Loader $loader): void
-    {
-        $this->loader = $loader;
-    }
-
-    /**
-     * Get current loader
-     */
-    public function getLoader(): Loader
-    {
-        if (! isset($this->loader)) {
-            $this->loader = new StringLoader();
-        }
-        return $this->loader;
-    }
-
-    /**
-     * Set current partials loader
-     */
-    public function setPartialsLoader(Loader $loader): void
-    {
-        $this->partialsLoader = $loader;
-    }
-
-    /**
-     * Get current partials loader
-     */
-    public function getPartialsLoader(): Loader
-    {
-        if (!isset($this->partialsLoader)) {
-            $this->partialsLoader = new StringLoader();
-        }
-        return $this->partialsLoader;
-    }
-
-    /**
-     * Set the Handlebars Tokenizer instance.
-     */
-    public function setTokenizer(Tokenizer $tokenizer): void
-    {
-        $this->tokenizer = $tokenizer;
-    }
-
-    /**
      * Get the current Handlebars Tokenizer instance.
      *
      * If no Tokenizer instance has been explicitly specified, this method will
@@ -231,14 +137,6 @@ class Handlebars
         }
 
         return $this->tokenizer;
-    }
-
-    /**
-     * Set the Handlebars Parser instance.
-     */
-    public function setParser(Parser $parser): void
-    {
-        $this->parser = $parser;
     }
 
     /**
@@ -266,9 +164,8 @@ class Handlebars
     /**
      * Load a template by name with current template loader
      */
-    public function loadTemplate(string $name): Template
+    public function loadTemplate(string $source): Template
     {
-        $source = $this->getLoader()->load($name);
         $tree = $this->tokenize($source);
         return new Template($this, $tree, $source);
     }
@@ -281,36 +178,8 @@ class Handlebars
         if (isset($this->aliases[$name])) {
             $name = $this->aliases[$name];
         }
-        $source = $this->getPartialsLoader()->load($name);
-        $tree = $this->tokenize($source);
-        return new Template($this, $tree, $source);
-    }
-
-    /**
-     * Register partial alias
-     */
-    public function registerPartial(string $alias, string $content): void
-    {
-        $this->aliases[$alias] = $content;
-    }
-
-    /**
-     * Un-register partial alias
-     */
-    public function unRegisterPartial(string $alias): void
-    {
-        if (isset($this->aliases[$alias])) {
-            unset($this->aliases[$alias]);
-        }
-    }
-
-    /**
-     * Load string into a template object
-     */
-    public function loadString(string $source): Template
-    {
-        $tree = $this->tokenize($source);
-        return new Template($this, $tree, $source);
+        $tree = $this->tokenize($name);
+        return new Template($this, $tree, $name);
     }
 
     /**

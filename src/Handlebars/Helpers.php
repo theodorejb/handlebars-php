@@ -168,7 +168,7 @@ class Helpers
      */
     public function helperIf(Template $template, Context $context, string $args, string $source): string
     {
-        $tpl = $template->getEngine()->loadString('{{#if ' . $args . '}}' . $source . '{{/if}}');
+        $tpl = $template->getEngine()->loadTemplate('{{#if ' . $args . '}}' . $source . '{{/if}}');
         $tree = $tpl->getTree();
         $tmp = $context->get($args);
         if ($tmp) {
