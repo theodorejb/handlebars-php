@@ -1,10 +1,6 @@
-#handlebars-php
+# handlebars-php
 
 #### A simple, logic-less, yet powerful templating engine for PHP
-
-Name: **handlebars-php**
-
-License: MIT
 
 ## About Handlebars
 
@@ -23,7 +19,7 @@ composer require salesforce/handlebars-php:"^3.0"
 
 ## Getting Started
 
-At the minimum, we are required to have an array model and a template string. Alternatively we can have a file containing handlebars (or html, text, etc) expression.
+At the minimum, we are required to have an array model and a template string.
 
 #### Template
 
@@ -33,72 +29,46 @@ Handlebars HTML-escapes values returned by a {{expression}}.
 
 ```html
 <div class="entry">
-  <h1>{{title}}</h1>
-  <div class="body">
-    Hello, my name is {{name}}
-  </div>
+    <h1>{{title}}</h1>
+    <div class="body">
+        Hello, my name is {{name}}
+    </div>
 </div>
 ```
 
-The string above can be used as is in your PHP file, or be put in a file (ie: */templates/main.tpl*), to be called upon rendering.
-
 #### PHP file
 
-Now that we've created our template file, in a php file (index.php) we'll create the data to passed to the model. The model is a key/value array.
+Now that we've created our template string, we'll create the data to passed to the model. The model is a key/value array.
 
 Below we are going to create the Handlebars object, set the partials loader, and put some data in the model.
-
-#### Assign Data
-
-The simplest way to assign data is to create an Array model. The model will contain all the data that will be passed to the template.
-```php
-<?php
-
-$model = [
-    "name" => "Yolo Baggins",
-    "title" => "I'm Title",
-    "permalink" => "blog/",
-    "foo" => "bar",
-    "article" => [
-        "title" => "My Article Title"
-    ],
-    "posts" => [
-        [
-            "title" => "Post #1",
-            "id" => 1,
-            "content" => "Content"
-        ],
-        [
-            "title" => "Post 2",
-            "id" => 2,
-            "content" => "Content"
-        ]
-    ]
-];
-```
 
 #### Render Template
 
 Use the method `Handlebars\Handlebars::render($template, $model)` to render you template once everything is created.
 
-***$template*** : Template can be the name of the file or a string containing the handlebars/html.
+***$template*** : Template should be a string containing the handlebars/html.
 
 ***$model*** : Is the array that we will pass into the template
 
-The code below will render the model to the *templates/main.tpl* template
-
 ```php
-echo $handlebars->render("main", $model);
+<?php
+
+$template = <<<'html'
+<div class="entry">
+    <h1>{{title}}</h1>
+    <div class="body">
+        Hello, my name is {{name}}
+    </div>
+</div>
+html;
+
+$model = [
+    "title" => "My Title",
+    "name" => "Yolo Baggins",
+];
+
+echo $handlebars->render($template, $model);
 ```
-
-
-Alternatively you can use $handlebars itself without invoking the render method
-
-```php
-echo $handlebars("main", $model);
-```
-
----
 
 ## Expressions
 
@@ -131,8 +101,8 @@ $model = [
 
 Let's work with the template.
 
-Handlebars expressions are the basic unit of a Handlebars template. You can use them alone in a {{mustache}}, pass them to a Handlebars helper, or use them as values in hash arguments.
-
+Handlebars expressions are the basic unit of a Handlebars template. You can use them alone in a {{mustache}},
+pass them to a Handlebars helper, or use them as values in hash arguments.
 
 The simplest Handlebars expression is a simple identifier:
 
@@ -187,9 +157,6 @@ Handlebars HTML-escapes values returned by a {{expression}}. If you don't want H
 {{{foo}}}
 ```
 
----
-
-
 ## Control Structures
 
 `if/else` and `unless` control structures are implemented as regular Handlebars helpers
@@ -231,7 +198,6 @@ You can use the unless helper as the inverse of the if helper. Its block will be
 {{/unless}}
 ```
 
----
 ##Iterators: EACH
 
 You can iterate over a list using the built-in each helper. Inside the block, you can use {{this}} or {{.}} to reference the element being iterated over.
@@ -243,7 +209,6 @@ You can iterate over a list using the built-in each helper. Inside the block, yo
 {{#each genres}}
     {{.}}
 {{/each}}
-
 
 {{#each cars}}
     <h3>{{category}}</h3>
@@ -289,7 +254,7 @@ $model = [
     ],
 ];
 
-    echo $engine->render($template, $model);    
+echo $engine->render($template, $model);    
 ```
 
 ### EACH/ELSE
@@ -335,13 +300,10 @@ When looping through items in each, you can optionally reference the current loo
   {{@index}}: {{this}}
 {{/each}}
 
-
 {{#each object}}
   {{@key}}: {{this}}
 {{/each}}
 ```
-
----
 
 ## Change Context: WITH
 
@@ -376,8 +338,6 @@ $model = [
 {{/each}}
 {{/with}}
 ```
-
----
 
 ## Handlebars Built-in Helpers
 
@@ -419,13 +379,9 @@ $model = [
 {{/with}}
 ```
 
----
-
 ## Other Helpers
 
 #### For convenience, Voodoo\Handlebars added some extra helpers.
-
----
 
 ### Upper
 
@@ -440,7 +396,6 @@ To format string to lowercase
 ```html
 {{#lower title}}
 ```
-
 
 ### Capitalize
 
@@ -472,7 +427,7 @@ To format date: `{{#format_date date '$format'}}`
 
 ### Inflect
 
-To singularize or plurialize words based on count `{{#inflect count $singular $plurial}}`
+To singularize or pluralize words based on count `{{#inflect count $singular $plurial}}`
 ```html
 {{#inflect count '%d book' '%d books'}}
 ```
@@ -525,11 +480,9 @@ Variable and blocks can still be used
 {{/repeat}}
 ```
 
-
 ### Define/Invoke
 
 Allow to define a block of content and use it later. It helps follow the DRY (Don't repeat yourself) principle.
-
 
 Define
 ```html
@@ -542,7 +495,6 @@ Invoke
 ```html
 {{#invoke $definedName}}
 ```
-
 
 Example:
 ```html
@@ -557,8 +509,6 @@ Example:
 Hello World! How do you do?
 ```
 
----
-
 ### Template Comments
 You can use comments in your handlebars code just as you would in your code. Since there is generally some level of logic, this is a good practice.
 
@@ -566,11 +516,9 @@ You can use comments in your handlebars code just as you would in your code. Sin
 {{!-- only output this author names if an author exists --}}
 ```
 
----
-
 ### Partials
 
-Partials are other templates you can include inside of the main template.
+Partials are other templates you can include inside the main template.
 
 To do so:
 
@@ -579,8 +527,6 @@ To do so:
 ```
 
 which is a file under /templates/my_partial.html
-
----
 
 ## Writing your own helpers
 
@@ -604,8 +550,6 @@ And now we can use the helper like this:
 {{#upper title}}
 ```
 
----
-
 ## Data Variables for #each
 
 In Handlebars JS v1.1, data variables `@first` and `@last` were added for the #each helper. Due to the these variables
@@ -623,7 +567,7 @@ $handlebars = new Handlebars([
 ``` 
 
 Given the following template and data:
-```
+```html
 {{#each data}}{{#if @first}}FIRST: {{/if}}{{this}}<br>{{/each}}
 ```
 ```php
@@ -635,7 +579,7 @@ FIRST: apple<br>banana<br>carrot<br>zucchini<br>
 ```
 
 Given the following template and the data above:
-```
+```html
 {{#each data}}{{@first}}: {{this}}<br>{{/each}}
 ```
 The output will be
@@ -645,7 +589,7 @@ true: apple<br>banana<br>carrot<br>zucchini<br>
 
 Data variables also support relative referencing within multiple #each statements.
 Given
-```
+```html
 {{#each data}}{{#each this}}outer: {{@../first}},inner: {{@first}};{{/each}}{{/each}}
 ```
 ```php
@@ -687,14 +631,12 @@ When `enableDataVariables` is `false`, existing behavior is not changed where so
 apple, banana, 0, zucchini
 ```
 
-
 When `enableDataVariables` is `true`, the behavior matches HandlebarsJS 1.1 behavior, where all data variables replace
 variables defined in the data and any data variable prefixed with `@` that is unknown will be blank.
 
 ```
 true, true, 0,
 ```
-
 
 #### Credits
 
