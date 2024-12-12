@@ -1,22 +1,4 @@
 <?php
-/**
- * Helpers
- *
- * a collection of helper function. normally a function like
- * function ($sender, $name, $arguments) $arguments is unscaped arguments and
- * is a string, not array
- *
- * @category  Xamin
- * @package   Handlebars
- * @author    fzerorubigd <fzerorubigd@gmail.com>
- * @author    Behrooz Shabani <everplays@gmail.com>
- * @author    Mardix <https://github.com/mardix>
- * @copyright 2012 (c) ParsPooyesh Co
- * @copyright 2013 (c) Behrooz Shabani
- * @copyright 2014 (c) Mardix
- * @license   MIT
- * @link      http://voodoophp.org/docs/handlebars
- */
 
 namespace Handlebars;
 
@@ -25,6 +7,9 @@ use InvalidArgumentException;
 use Traversable;
 use LogicException;
 
+/**
+ * A collection of helper functions
+ */
 class Helpers
 {
     /**

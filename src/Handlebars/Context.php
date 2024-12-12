@@ -1,25 +1,13 @@
 <?php
-/**
- * Handlebars context
- * Context for a template
- *
- * @category  Xamin
- * @package   Handlebars
- * @author    fzerorubigd <fzerorubigd@gmail.com>
- * @author    Behrooz Shabani <everplays@gmail.com>
- * @author    Mardix <https://github.com/mardix>
- * @copyright 2012 (c) ParsPooyesh Co
- * @copyright 2013 (c) Behrooz Shabani
- * @copyright 2013 (c) Mardix
- * @license   MIT
- * @link      http://voodoophp.org/docs/handlebars
- */
 
 namespace Handlebars;
 
 use InvalidArgumentException;
 use LogicException;
 
+/**
+ * Context for a template
+ */
 class Context
 {
     const DATA_KEY = 'key';

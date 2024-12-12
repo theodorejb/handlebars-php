@@ -1,25 +1,13 @@
 <?php
-/**
- * Handlebars base template
- * contain some utility method to get context and helpers
- *
- * @category  Xamin
- * @package   Handlebars
- * @author    fzerorubigd <fzerorubigd@gmail.com>
- * @author    Behrooz Shabani <everplays@gmail.com>
- * @author    Mardix <https://github.com/mardix>
- * @copyright 2012 (c) ParsPooyesh Co
- * @copyright 2013 (c) Behrooz Shabani
- * @copyright 2013 (c) Mardix
- * @license   MIT
- * @link      http://voodoophp.org/docs/handlebars
- */
 
 namespace Handlebars;
 
 use InvalidArgumentException;
 use RuntimeException;
 
+/**
+ * Handlebars base template. Contains utility methods to get context and helpers.
+ */
 class Template
 {
     protected Handlebars $handlebars;
