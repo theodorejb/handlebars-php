@@ -384,7 +384,7 @@ class Helpers
      */
     public function helperFormatDate(Template $template, Context $context, string $args, string $source): string
     {
-        preg_match("/(.*?)\s+(?:(?:\"|\')(.*?)(?:\"|\'))/", $args, $m);
+        preg_match("/(.*?)\s+[\"'](.*?)[\"']/", $args, $m);
         $keyname = $m[1];
         $format = $m[2];
 
@@ -409,7 +409,7 @@ class Helpers
      */
     public function helperInflect(Template $template, Context $context, string $args, string $source): string
     {
-        preg_match("/(.*?)\s+(?:(?:\"|\')(.*?)(?:\"|\'))\s+(?:(?:\"|\')(.*?)(?:\"|\'))/", $args, $m);
+        preg_match("/(.*?)\s+[\"'](.*?)[\"']\s+[\"'](.*?)[\"']/", $args, $m);
         $keyname = $m[1];
         $singular = $m[2];
         $plurial = $m[3];
@@ -425,7 +425,7 @@ class Helpers
       */
     public function helperDefault(Template $template, Context $context, string $args, string $source): string
     {
-        preg_match("/(.*?)\s+(?:(?:\"|\')(.*?)(?:\"|\'))/", trim($args), $m);
+        preg_match("/(.*?)\s+[\"'](.*?)[\"']/", trim($args), $m);
         $keyname = $m[1];
         $default = $m[2];
         $value = $context->get($keyname);
@@ -438,7 +438,7 @@ class Helpers
       */
     public function helperTruncate(Template $template, Context $context, string $args, string $source): string
     {
-        preg_match("/(.*?)\s+(.*?)\s+(?:(?:\"|\')(.*?)(?:\"|\'))/", trim($args), $m);
+        preg_match("/(.*?)\s+(.*?)\s+[\"'](.*?)[\"']/", trim($args), $m);
         $keyname = $m[1];
         $limit = $m[2];
         $ellipsis = $m[3];
@@ -528,7 +528,7 @@ class Helpers
      */
     private function extractSlice(string $string): array
     {
-        preg_match("/^([\w\._\-]+)(?:\[([\-0-9]*?:[\-0-9]*?)\])?/i", $string, $m);
+        preg_match("/^([\w._\-]+)(?:\[([\-0-9]*?:[\-0-9]*?)])?/i", $string, $m);
         $slice_start = $slice_end = null;
         if (isset($m[2])) {
             [$slice_start, $slice_end] = explode(":", $m[2]);
