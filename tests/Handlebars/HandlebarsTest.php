@@ -3,7 +3,7 @@
 class HandlebarsTest extends PHPUnit\Framework\TestCase
 {
     /**
-     * @dataProvider simpleTagdataProvider
+     * @dataProvider simpleTagDataProvider
      */
     public function testBasicTags(string $src, array $data, string $result): void
     {
@@ -11,7 +11,7 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
         $this->assertSame($result, $engine->render($src, $data));
     }
 
-    public function simpleTagdataProvider(): array
+    public function simpleTagDataProvider(): array
     {
         return array(
             array(
@@ -65,9 +65,44 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
                 ''
             ],
             [
+                '{{#if data}}Yes{{else if true}}Other{{/if}}',
+                ['data' => false],
+                'Other'
+            ],
+            [
+                '{{#if data}}Yes{{else if false}}False{{/if}}',
+                [],
+                ''
+            ],
+            [
+                '{{#if null}}Yes{{else if "0 items"}}String with space{{else}}No{{/if}}',
+                [],
+                'String with space'
+            ],
+            [
+                '{{#if true}}Yes{{/if}}',
+                [],
+                'Yes'
+            ],
+            [
                 '{{#unless data}}OK{{/unless}}',
                 ['data' => false],
                 'OK'
+            ],
+            [
+                '{{#unless data}}OK{{/unless}}',
+                [],
+                'OK'
+            ],
+            [
+                '{{#unless false}}OK{{/unless}}',
+                [],
+                'OK'
+            ],
+            [
+                '{{#unless true}}OK{{/unless}}',
+                [],
+                ''
             ],
             [
                 '{{#unless data}}OK {{else}}I believe{{/unless}}',
@@ -372,5 +407,16 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
             return 'Test helper is called';
         });
         $this->assertEquals('Test helper is called', $engine->render('{{#test}}', []));
+    }
+
+    public function testParseArgs(): void
+    {
+        $context = new \Handlebars\Context(['status' => true, 'name' => 'John']);
+        $this->assertSame([true, false], \Handlebars\Helpers::parseArgs($context, 'status false'));
+        $this->assertSame([null, true], \Handlebars\Helpers::parseArgs($context, 'non_existent true'));
+        $this->assertSame(['John'], \Handlebars\Helpers::parseArgs($context, 'name'));
+        $this->assertSame([null, 'value"'], \Handlebars\Helpers::parseArgs($context, "null 'value\"'"));
+        $this->assertSame(["value'"], \Handlebars\Helpers::parseArgs($context, '"value\'"'));
+        $this->assertSame([12, 12.0], \Handlebars\Helpers::parseArgs($context, "12 12.0"));
     }
 }

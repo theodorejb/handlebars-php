@@ -131,7 +131,7 @@ class Helpers
     {
         $tpl = $template->getEngine()->loadTemplate('{{#if ' . $args . '}}' . $source . '{{/if}}');
         $tree = $tpl->getTree();
-        $tmp = $context->get($args);
+        $tmp = $this->parseArgs($context, $args)[0];
         if ($tmp) {
             $token = 'else';
             foreach ($tree[0]['nodes'] as $node) {
@@ -277,7 +277,7 @@ class Helpers
      */
     public function helperUnless(Template $template, Context $context, string $args, string $source): string
     {
-        $tmp = $context->get($args);
+        $tmp = $this->parseArgs($context, $args)[0];
         if (!$tmp) {
             $template->setStopToken('else');
             $buffer = $template->render($context);
@@ -375,7 +375,6 @@ class Helpers
 
         $date = $context->get($keyname);
         if ($format) {
-            $dt = new DateTime;
             if (is_numeric($date)) {
                 $dt = (new DateTime)->setTimestamp($date);
             } else {
@@ -526,21 +525,36 @@ class Helpers
     /**
      * Parse a variable from current args
      */
-    private function parseArgs(Context $context, string $args): array
+    public static function parseArgs(Context $context, string $argStr): array
     {
-        $args = preg_replace('/\s+/', ' ', trim($args));
-        $eles = explode(' ', $args);
-        foreach ($eles as $key => $ele) {
-            if (in_array(substr($ele, 0, 1), ['\'', '"'])) {
-                $val = trim($ele, '\'"');
-            } else if (is_numeric($ele)) {
-                $val = $ele;
+        $args = preg_split('/\s+/', trim($argStr));
+
+        // within strings, we don't want to replace multiple spaces with single space.
+        // if first char is single or double quote, but last character is not?
+
+        foreach ($args as $idx => $el) {
+            $firstChar = substr($el, 0, 1);
+
+            if ($firstChar === "'") {
+                $val = trim($el, "'");
+            } elseif ($firstChar === '"') {
+                $val = trim($el, '"');
+            } elseif ($el === 'null') {
+                $val = null;
+            } elseif ($el === 'true') {
+                $val = true;
+            } elseif ($el === 'false') {
+                $val = false;
+            } elseif (is_numeric($el)) {
+                $val = $el + 0;
             } else {
-                $val = $context->get($ele);
+                /** @var scalar|null $val */
+                $val = $context->get($el);
             }
-            $eles[$key] = $val;
+
+            $args[$idx] = $val;
         }
 
-        return $eles;
+        return $args;
     }
 }
