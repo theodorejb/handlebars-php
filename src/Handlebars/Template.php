@@ -270,7 +270,7 @@ class Template
     private function variables(Context $context, array $current, bool $escaped): string
     {
         $name = $current[Tokenizer::NAME];
-        $value = $context->get($name);
+        $value = (string) $context->get($name);
 
         // If @data variables are enabled, use the more complex algorithm for handling the the variables otherwise
         // use the previous version.

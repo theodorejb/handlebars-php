@@ -211,12 +211,10 @@ class Context
         }
         if (count($this->stack) < $level) {
             if ($strict) {
-                throw new InvalidArgumentException(
-                    'can not find variable in context'
-                );
+                throw new InvalidArgumentException('can not find variable in context');
             }
 
-            return '';
+            return null;
         }
         end($this->stack);
         while ($level) {
@@ -226,18 +224,16 @@ class Context
         $current = current($this->stack);
         if (!$variableName) {
             if ($strict) {
-                throw new InvalidArgumentException(
-                    'can not find variable in context'
-                );
+                throw new InvalidArgumentException('can not find variable in context');
             }
-            return '';
+            return null;
         } elseif ($variableName == '.' || $variableName == 'this') {
             return $current;
         } else {
             $chunks = explode('.', $variableName);
             foreach ($chunks as $chunk) {
-                if (is_string($current) and $current == '') {
-                    return $current;
+                if (is_null($current)) {
+                    return null;
                 }
                 $current = $this->findVariableInContext($current, $chunk, $strict);
             }
@@ -324,7 +320,7 @@ class Context
      */
     private function findVariableInContext($variable, string $inside, bool $strict = false)
     {
-        $value = '';
+        $value = null;
         if (($inside !== '0' && empty($inside)) || ($inside == 'this')) {
             return $variable;
         } elseif (is_array($variable)) {

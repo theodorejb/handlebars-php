@@ -3,19 +3,14 @@
 class HandlebarsTest extends PHPUnit\Framework\TestCase
 {
     /**
-     * Test basic tags
-     *
      * @dataProvider simpleTagdataProvider
      */
     public function testBasicTags(string $src, array $data, string $result): void
     {
         $engine = new \Handlebars\Handlebars();
-        $this->assertEquals($result, $engine->render($src, $data));
+        $this->assertSame($result, $engine->render($src, $data));
     }
 
-    /**
-     * Simple tag provider
-     */
     public function simpleTagdataProvider(): array
     {
         return array(
@@ -34,24 +29,29 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
                 array('data' => array('key' => 'result')),
                 'result'
             ),
+            array(
+                '{{non.existent}}',
+                array(),
+                ''
+            ),
         );
     }
 
     /**
      * Test helpers (internal helpers)
      *
-     * @dataProvider internalHelpersdataProvider
+     * @dataProvider internalHelpersDataProvider
      */
     public function testSimpleHelpers(string $src, array $data, string $result): void
     {
         $engine = new \Handlebars\Handlebars();
-        $this->assertEquals($result, $engine->render($src, $data));
+        $this->assertSame($result, $engine->render($src, $data));
     }
 
     /**
      * Simple helpers provider
      */
-    public function internalHelpersdataProvider(): array
+    public function internalHelpersDataProvider(): array
     {
         return [
             [
@@ -187,14 +187,14 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
      */
     public function testDataVariables(string $src, array $data, string $result, bool $enableDataVariables): void
     {
-        $engine = new \Handlebars\Handlebars(array(
+        $engine = new \Handlebars\Handlebars([
             'enableDataVariables'=> $enableDataVariables,
-        ));
+        ]);
 
-        $this->assertEquals($result, $engine->render($src, $data));
+        $this->assertSame($result, $engine->render($src, $data));
     }
 
-    public function testDataVariables1()
+    public function testDataVariables1(): void
     {
         $object = new stdClass;
         $object->{'@first'} = 'apple';
@@ -354,7 +354,7 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
     /**
      * Management helpers
      */
-    public function testHelpersManagement()
+    public function testHelpersManagement(): void
     {
         $helpers = new \Handlebars\Helpers(array('test' => function () {
         }), false);
@@ -365,10 +365,7 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
         $this->assertFalse($engine->hasHelper('test'));
     }
 
-    /**
-     * Custom helper test
-     */
-    public function testCustomHelper()
+    public function testCustomHelper(): void
     {
         $engine = new \Handlebars\Handlebars();
         $engine->addHelper('test', function () {
