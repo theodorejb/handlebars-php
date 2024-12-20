@@ -136,6 +136,11 @@ class HandlebarsTest extends PHPUnit\Framework\TestCase
             ],
             [
                 "{{#inflect count '%d album' '%d albums' }}",
+                ["count" => 0],
+                '0 albums'
+            ],
+            [
+                "{{#inflect count '%d album' '%d albums' }}",
                 ["count" => 10],
                 '10 albums'
             ],

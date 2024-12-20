@@ -397,9 +397,9 @@ class Helpers
         preg_match("/(.*?)\s+[\"'](.*?)[\"']\s+[\"'](.*?)[\"']/", $args, $m);
         $keyname = $m[1];
         $singular = $m[2];
-        $plurial = $m[3];
+        $plural = $m[3];
         $value = $context->get($keyname);
-        $inflect = ($value <= 1) ? $singular : $plurial;
+        $inflect = ($value == 1) ? $singular : $plural;
         return sprintf($inflect, $value);
     }
 
